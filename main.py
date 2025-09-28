@@ -89,7 +89,10 @@ class ImageLabelerApp:
             pan_start=self._on_pan_start,
             pan_update=self._on_pan_update,
             pan_end=self._on_pan_end,
-            mouse_motion=self._on_mouse_motion
+            mouse_motion=self._on_mouse_motion,
+            drawing_state=self._on_drawing_state_change,
+            zoom_in=self._zoom_in_mouse,
+            zoom_out=self._zoom_out_mouse
         )
     
     def _setup_keyboard_shortcuts(self) -> None:
@@ -312,6 +315,32 @@ class ImageLabelerApp:
     def _on_mouse_motion(self, x: float, y: float) -> None:
         """Handle mouse motion for zoom centering."""
         self.zoom_manager.update_mouse_position(x, y)
+
+    def _on_drawing_state_change(self, drawing: bool) -> None:
+        """Handle changes in drawing state."""
+        self.zoom_manager.set_drawing_mode(drawing)
+
+    def _zoom_in_mouse(self) -> None:
+        """Zoom in using mouse wheel with centering."""
+        # Update mouse position for zoom centering
+        canvas = self.labeling_view.canvas
+        mouse_x = canvas.winfo_pointerx() - canvas.winfo_rootx()
+        mouse_y = canvas.winfo_pointery() - canvas.winfo_rooty()
+        self.zoom_manager.update_mouse_position(mouse_x, mouse_y)
+
+        # Perform zoom
+        self.zoom_manager.zoom_in_mouse()
+
+    def _zoom_out_mouse(self) -> None:
+        """Zoom out using mouse wheel with centering."""
+        # Update mouse position for zoom centering
+        canvas = self.labeling_view.canvas
+        mouse_x = canvas.winfo_pointerx() - canvas.winfo_rootx()
+        mouse_y = canvas.winfo_pointery() - canvas.winfo_rooty()
+        self.zoom_manager.update_mouse_position(mouse_x, mouse_y)
+
+        # Perform zoom
+        self.zoom_manager.zoom_out_mouse()
     
     def _grid_scroll_up(self) -> None:
         """Scroll up in grid view."""
@@ -324,39 +353,9 @@ class ImageLabelerApp:
             self.grid_view.scroll_down()
     
     def _bind_zoom_mousewheel(self) -> None:
-        """Bind mousewheel events for zooming."""
-        def _on_zoom_mousewheel(event):
-            if self.current_view == "labeling":
-                # Get mouse position for zoom centering
-                canvas = self.labeling_view.canvas
-                mouse_x = canvas.winfo_pointerx() - canvas.winfo_rootx()
-                mouse_y = canvas.winfo_pointery() - canvas.winfo_rooty()
-                self.zoom_manager.update_mouse_position(mouse_x, mouse_y)
-                
-                # Zoom based on scroll direction
-                if event.delta > 0:  # Scroll up - zoom in
-                    self.zoom_manager.zoom_in_mouse()
-                else:  # Scroll down - zoom out
-                    self.zoom_manager.zoom_out_mouse()
-        
-        def _on_zoom_mouse_scroll(event):
-            if self.current_view == "labeling":
-                # Get mouse position for zoom centering
-                canvas = self.labeling_view.canvas
-                mouse_x = canvas.winfo_pointerx() - canvas.winfo_rootx()
-                mouse_y = canvas.winfo_pointery() - canvas.winfo_rooty()
-                self.zoom_manager.update_mouse_position(mouse_x, mouse_y)
-                
-                # Handle mouse scroll events
-                if event.num == 4:  # Scroll up - zoom in
-                    self.zoom_manager.zoom_in_mouse()
-                elif event.num == 5:  # Scroll down - zoom out
-                    self.zoom_manager.zoom_out_mouse()
-        
-        # Bind to root window
-        self.root.bind_all("<MouseWheel>", _on_zoom_mousewheel)
-        self.root.bind_all("<Button-4>", _on_zoom_mouse_scroll)
-        self.root.bind_all("<Button-5>", _on_zoom_mouse_scroll)
+        """Bind mousewheel events for zooming - now handled by labeling view."""
+        # Zoom events are now handled directly by the canvas in labeling view
+        pass
 
 
 def main():

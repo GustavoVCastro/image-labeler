@@ -34,6 +34,9 @@ class LabelingView:
         self.pan_update_callback: Optional[Callable[[float, float], None]] = None
         self.pan_end_callback: Optional[Callable[[], None]] = None
         self.mouse_motion_callback: Optional[Callable[[float, float], None]] = None
+        self.drawing_state_callback: Optional[Callable[[bool], None]] = None
+        self.zoom_in_callback: Optional[Callable[[], None]] = None
+        self.zoom_out_callback: Optional[Callable[[], None]] = None
         
         # Bind mouse events
         self._bind_mouse_events()
@@ -96,12 +99,15 @@ class LabelingView:
         for rect_id in self.box_rects:
             self.canvas.move(rect_id, dx, dy)
     
-    def set_callbacks(self, 
+    def set_callbacks(self,
                      box_created: Optional[Callable[[float, float, float, float], None]] = None,
                      pan_start: Optional[Callable[[float, float], None]] = None,
                      pan_update: Optional[Callable[[float, float], None]] = None,
                      pan_end: Optional[Callable[[], None]] = None,
-                     mouse_motion: Optional[Callable[[float, float], None]] = None) -> None:
+                     mouse_motion: Optional[Callable[[float, float], None]] = None,
+                     drawing_state: Optional[Callable[[bool], None]] = None,
+                     zoom_in: Optional[Callable[[], None]] = None,
+                     zoom_out: Optional[Callable[[], None]] = None) -> None:
         """Set callback functions for various events."""
         if box_created:
             self.box_created_callback = box_created
@@ -113,6 +119,12 @@ class LabelingView:
             self.pan_end_callback = pan_end
         if mouse_motion:
             self.mouse_motion_callback = mouse_motion
+        if drawing_state:
+            self.drawing_state_callback = drawing_state
+        if zoom_in:
+            self.zoom_in_callback = zoom_in
+        if zoom_out:
+            self.zoom_out_callback = zoom_out
     
     def _bind_mouse_events(self) -> None:
         """Bind mouse events for drawing and panning."""
@@ -122,24 +134,16 @@ class LabelingView:
         self.canvas.bind("<Motion>", self._on_mouse_motion)
     
     def _bind_zoom_events(self) -> None:
-        """Bind zoom events."""
-        def _on_zoom_mousewheel(event):
-            # This will be handled by the main application
-            pass
-        
-        def _on_zoom_mouse_scroll(event):
-            # This will be handled by the main application
-            pass
-        
-        self.canvas.bind_all("<MouseWheel>", _on_zoom_mousewheel)
-        self.canvas.bind_all("<Button-4>", _on_zoom_mouse_scroll)
-        self.canvas.bind_all("<Button-5>", _on_zoom_mouse_scroll)
-    
+        """Bind zoom events to canvas."""
+        self.canvas.bind("<MouseWheel>", self._on_canvas_mousewheel)
+        self.canvas.bind("<Button-4>", self._on_canvas_scroll_up)
+        self.canvas.bind("<Button-5>", self._on_canvas_scroll_down)
+
     def _unbind_zoom_events(self) -> None:
-        """Unbind zoom events."""
-        self.canvas.unbind_all("<MouseWheel>")
-        self.canvas.unbind_all("<Button-4>")
-        self.canvas.unbind_all("<Button-5>")
+        """Unbind zoom events from canvas."""
+        self.canvas.unbind("<MouseWheel>")
+        self.canvas.unbind("<Button-4>")
+        self.canvas.unbind("<Button-5>")
     
     def _bind_cursor_events(self) -> None:
         """Bind cursor events."""
@@ -162,6 +166,9 @@ class LabelingView:
             self.drawing_rect = self.canvas.create_rectangle(
                 self.start_x, self.start_y, ex, ey, outline=BOX_OUTLINE_COLOR
             )
+            # Notify that drawing has started
+            if self.drawing_state_callback:
+                self.drawing_state_callback(True)
         else:
             # Start panning
             if self.pan_start_callback:
@@ -207,6 +214,10 @@ class LabelingView:
             self.drawing_rect = None
             self.start_x = None
             self.start_y = None
+
+            # Notify that drawing has ended
+            if self.drawing_state_callback:
+                self.drawing_state_callback(False)
         else:
             # End panning
             if self.pan_end_callback:
@@ -225,3 +236,20 @@ class LabelingView:
     def _on_canvas_leave(self, event) -> None:
         """Handle mouse leaving canvas."""
         self.canvas.config(cursor="")
+
+    def _on_canvas_mousewheel(self, event) -> None:
+        """Handle mouse wheel events on canvas."""
+        if event.delta > 0 and self.zoom_in_callback:
+            self.zoom_in_callback()
+        elif event.delta < 0 and self.zoom_out_callback:
+            self.zoom_out_callback()
+
+    def _on_canvas_scroll_up(self, event) -> None:
+        """Handle scroll up events on canvas."""
+        if self.zoom_in_callback:
+            self.zoom_in_callback()
+
+    def _on_canvas_scroll_down(self, event) -> None:
+        """Handle scroll down events on canvas."""
+        if self.zoom_out_callback:
+            self.zoom_out_callback()
