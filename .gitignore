@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+*.env
+*.bak
+*.log
+*.sqlite3
+*.csv
+.DS_Store
+
+# IDEs
+.idea/
+.vscode/
+
+# Project-specific - ignore files but keep directories visible
+input/*
+!input/.gitkeep
+labels/*
+!labels/.gitkeep
+images/*
+!images/.gitkeep
