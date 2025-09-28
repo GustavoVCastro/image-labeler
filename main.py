@@ -7,7 +7,7 @@ A GUI application for labeling images with bounding boxes in YOLO format.
 import os
 from typing import List, Optional
 
-from ui import MainWindow, GridView, LabelingView, NavigationControls, ZoomControls
+from ui import MainWindow, GridView, LabelingView, NavigationControls, ZoomControls, ImageInfoBar
 from core import ImageManager, LabelManager, ZoomManager
 from utils import (
     DEFAULT_IMAGES_DIR, DEFAULT_LABELS_DIR, 
@@ -38,6 +38,7 @@ class ImageLabelerApp:
         self.labeling_view = LabelingView(self.root)
         self.nav_controls = NavigationControls(self.root)
         self.zoom_controls = ZoomControls(self.root)
+        self.image_info_bar = ImageInfoBar(self.root)
         
         # Application state
         self.images: List[str] = []
@@ -64,6 +65,7 @@ class ImageLabelerApp:
         # Initially hide labeling UI components
         self.labeling_view.hide()
         self.nav_controls.pack_forget()
+        self.image_info_bar.pack_forget()
     
     def _setup_callbacks(self) -> None:
         """Setup callback functions for UI components."""
@@ -108,7 +110,8 @@ class ImageLabelerApp:
             zoom_200=self._zoom_to_200,
             clear_labels=self._clear_labels,
             grid_scroll_up=self._grid_scroll_up,
-            grid_scroll_down=self._grid_scroll_down
+            grid_scroll_down=self._grid_scroll_down,
+            grid_view=self._show_grid_view
         )
         
         # Bind zoom mousewheel events
@@ -126,19 +129,21 @@ class ImageLabelerApp:
         if self.images:
             self.current_image_index = 0
             self._show_grid_view()
+            self._update_image_info()
     
     def _show_grid_view(self) -> None:
         """Show the grid view of all images."""
         self.current_view = "grid"
-        
+
         # Hide labeling UI
         self.labeling_view.hide()
         self.nav_controls.pack_forget()
-        
+        self.image_info_bar.pack_forget()
+
         # Clear labeling state
         self.labeling_view.clear_canvas()
         self.label_manager.clear_boxes()
-        
+
         # Show grid UI
         self.grid_view.show()
         self.grid_view.populate_grid(self.images)
@@ -152,19 +157,21 @@ class ImageLabelerApp:
         """Show the labeling view for the current image."""
         if not self.images:
             return
-        
+
         self.current_view = "labeling"
-        
+
         # Hide grid UI
         self.grid_view.hide()
-        
+
         # Show labeling UI
         self.labeling_view.show()
+        self.image_info_bar.pack(side="bottom", fill="x")
         self.nav_controls.pack(side="bottom", fill="x")
-        
+
         # Load and display current image
         self._load_current_image()
         self._update_navigation_buttons()
+        self._update_image_info()
     
     def _load_current_image(self) -> None:
         """Load the current image and its labels."""
@@ -216,16 +223,35 @@ class ImageLabelerApp:
         if self.images:
             self.current_image_index = (self.current_image_index - 1) % len(self.images)
             self._load_current_image()
+            self._update_image_info()
     
     def _next_image(self) -> None:
         """Navigate to the next image."""
         if self.images:
             self.current_image_index = (self.current_image_index + 1) % len(self.images)
             self._load_current_image()
+            self._update_image_info()
     
     def _update_navigation_buttons(self) -> None:
         """Update the state of navigation buttons."""
         self.nav_controls.update_navigation_state(bool(self.images))
+
+    def _update_image_info(self) -> None:
+        """Update the image information bar."""
+        if self.current_view == "labeling" and self.images:
+            # Get the filename from the full path
+            image_path = self.images[self.current_image_index]
+            image_name = os.path.basename(image_path)
+
+            # Update the info bar
+            self.image_info_bar.update_info(
+                image_name=image_name,
+                current_index=self.current_image_index,
+                total_images=len(self.images)
+            )
+        else:
+            # Clear the info bar when no image is loaded
+            self.image_info_bar.update_info()
     
     def _on_box_created(self, x1: float, y1: float, x2: float, y2: float) -> None:
         """Handle creation of a new bounding box."""

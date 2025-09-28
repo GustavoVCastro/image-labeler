@@ -3,4 +3,4 @@
 from .main_window import MainWindow
 from .grid_view import GridView
 from .labeling_view import LabelingView
-from .controls import NavigationControls, ZoomControls
+from .controls import NavigationControls, ZoomControls, ImageInfoBar

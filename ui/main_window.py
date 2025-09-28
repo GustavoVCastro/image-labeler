@@ -30,7 +30,7 @@ class MainWindow:
         """Set the callback function for loading images."""
         self.load_images_callback = callback
     
-    def bind_keyboard_shortcuts(self, 
+    def bind_keyboard_shortcuts(self,
                                prev_image: Callable = None,
                                next_image: Callable = None,
                                undo_box: Callable = None,
@@ -41,7 +41,8 @@ class MainWindow:
                                zoom_200: Callable = None,
                                clear_labels: Callable = None,
                                grid_scroll_up: Callable = None,
-                               grid_scroll_down: Callable = None) -> None:
+                               grid_scroll_down: Callable = None,
+                               grid_view: Callable = None) -> None:
         """Bind keyboard shortcuts to functions."""
         if prev_image:
             self.root.bind("<Left>", lambda e: prev_image())
@@ -66,6 +67,14 @@ class MainWindow:
             self.root.bind("<Up>", lambda e: grid_scroll_up())
         if grid_scroll_down:
             self.root.bind("<Down>", lambda e: grid_scroll_down())
+        if grid_view:
+            self.root.bind("q", lambda e: grid_view())
+        if zoom_fit:
+            self.root.bind("f", lambda e: zoom_fit())
+        if zoom_100:
+            self.root.bind("1", lambda e: zoom_100())
+        if zoom_200:
+            self.root.bind("2", lambda e: zoom_200())
     
     def run(self) -> None:
         """Start the main event loop."""
