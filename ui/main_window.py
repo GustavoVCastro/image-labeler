@@ -62,7 +62,7 @@ class MainWindow:
         if zoom_200:
             self.root.bind("<Control-2>", lambda e: zoom_200())  # Ctrl+2 to zoom to 200%
         if clear_labels:
-            self.root.bind("<Control-BackSpace>", lambda e: clear_labels())  # Ctrl+Backspace clears labels
+            self.root.bind("c", lambda e: clear_labels())  # Ctrl+Backspace clears labels
         if grid_scroll_up:
             self.root.bind("<Up>", lambda e: grid_scroll_up())
         if grid_scroll_down:

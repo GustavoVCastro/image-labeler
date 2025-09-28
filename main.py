@@ -34,7 +34,7 @@ class ImageLabelerApp:
         self.zoom_manager = ZoomManager(self.image_manager, self._update_display, self.root)
         
         # Initialize UI components
-        self.grid_view = GridView(self.root)
+        self.grid_view = GridView(self.root, self.labels_dir)
         self.labeling_view = LabelingView(self.root)
         self.nav_controls = NavigationControls(self.root)
         self.zoom_controls = ZoomControls(self.root)
@@ -273,6 +273,9 @@ class ImageLabelerApp:
         # Save labels
         current_image_path = self.images[self.current_image_index]
         self.label_manager.save_labels(current_image_path)
+
+        # Refresh checkmarks in grid view
+        self.grid_view.refresh_checkmarks()
     
     def _clear_labels(self) -> None:
         """Clear all labels for the current image."""
@@ -285,7 +288,10 @@ class ImageLabelerApp:
         # Delete label file
         current_image_path = self.images[self.current_image_index]
         self.label_manager.delete_labels(current_image_path)
-        
+
+        # Refresh checkmarks in grid view
+        self.grid_view.refresh_checkmarks()
+
         # Update display
         self._update_display()
     
@@ -298,7 +304,10 @@ class ImageLabelerApp:
             # Save updated labels
             current_image_path = self.images[self.current_image_index]
             self.label_manager.save_labels(current_image_path)
-            
+
+            # Refresh checkmarks in grid view (in case all boxes were removed)
+            self.grid_view.refresh_checkmarks()
+
             # Update display
             self._update_display()
     

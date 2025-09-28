@@ -1,8 +1,6 @@
-- Change project structure so that's not just a big file
 - Add a little check at the bottom of images on grid that are already labeled. It should not only check if lable file exist, it should also check if it's empty.
 - Fix the zooming, it's wierd. Look for a concept of anchoring the image.
 - The image centering when loaded is not working under certain scenarios, investigate that.
-- Show the image name the bottom of the page when viewing it.
 
 
 TODO for far future.
