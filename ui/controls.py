@@ -13,12 +13,12 @@ class NavigationControls:
         # Navigation buttons
         self.grid_button = tk.Button(self.frame, text="Grid")
         self.grid_button.pack(side=tk.LEFT)
-        
+
         self.prev_button = tk.Button(self.frame, text="Previous")
-        self.prev_button.pack(side=tk.LEFT)
+        self.prev_button.pack(side=tk.LEFT, padx=(10, 0))
         
         self.next_button = tk.Button(self.frame, text="Next")
-        self.next_button.pack(side=tk.RIGHT)
+        self.next_button.pack(side=tk.LEFT)
         
         # Action buttons
         self.clear_labels_button = tk.Button(self.frame, text="Clear Labels")

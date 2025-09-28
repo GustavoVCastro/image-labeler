@@ -4,8 +4,8 @@
 SUPPORTED_EXTENSIONS = ('.png', '.jpg', '.jpeg', '.bmp', '.gif')
 
 # Default directories
-DEFAULT_IMAGES_DIR = "images"
-DEFAULT_LABELS_DIR = "labels"
+DEFAULT_IMAGES_DIR = "data/images"
+DEFAULT_LABELS_DIR = "data/labels"
 
 # UI Configuration
 DEFAULT_WINDOW_SIZE = "1200x800"

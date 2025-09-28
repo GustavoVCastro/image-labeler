@@ -18,9 +18,8 @@ venv/
 .vscode/
 
 # Project-specific - ignore files but keep directories visible
-input/*
-!input/.gitkeep
-labels/*
-!labels/.gitkeep
-images/*
-!images/.gitkeep
+data/input
+data/labels/*
+!data/labels/.gitkeep
+data/images/*
+!data/images/.gitkeep
