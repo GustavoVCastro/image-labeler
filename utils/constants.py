@@ -21,6 +21,7 @@ ZOOM_COOLDOWN = 50  # milliseconds between zoom operations
 ZOOM_INCREMENT_KEYBOARD = 1.1  # Zoom increment for keyboard
 ZOOM_INCREMENT_MOUSE = 1.05  # Zoom increment for mouse wheel (smoother)
 
+
 # Drawing Configuration
 MIN_BOX_SIZE = 5  # Minimum bounding box size in pixels
 BOX_OUTLINE_COLOR = "red"

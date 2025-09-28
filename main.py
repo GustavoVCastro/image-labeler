@@ -31,7 +31,7 @@ class ImageLabelerApp:
         # Initialize core managers
         self.image_manager = ImageManager()
         self.label_manager = LabelManager(self.labels_dir)
-        self.zoom_manager = ZoomManager(self.image_manager, self._update_display)
+        self.zoom_manager = ZoomManager(self.image_manager, self._update_display, self.root)
         
         # Initialize UI components
         self.grid_view = GridView(self.root)
@@ -321,25 +321,25 @@ class ImageLabelerApp:
         self.zoom_manager.set_drawing_mode(drawing)
 
     def _zoom_in_mouse(self) -> None:
-        """Zoom in using mouse wheel with centering."""
+        """Zoom in centered on cursor position."""
         # Update mouse position for zoom centering
         canvas = self.labeling_view.canvas
         mouse_x = canvas.winfo_pointerx() - canvas.winfo_rootx()
         mouse_y = canvas.winfo_pointery() - canvas.winfo_rooty()
         self.zoom_manager.update_mouse_position(mouse_x, mouse_y)
 
-        # Perform zoom
+        # Perform immediate zoom in
         self.zoom_manager.zoom_in_mouse()
 
     def _zoom_out_mouse(self) -> None:
-        """Zoom out using mouse wheel with centering."""
+        """Zoom out centered on cursor position."""
         # Update mouse position for zoom centering
         canvas = self.labeling_view.canvas
         mouse_x = canvas.winfo_pointerx() - canvas.winfo_rootx()
         mouse_y = canvas.winfo_pointery() - canvas.winfo_rooty()
         self.zoom_manager.update_mouse_position(mouse_x, mouse_y)
 
-        # Perform zoom
+        # Perform immediate zoom out
         self.zoom_manager.zoom_out_mouse()
     
     def _grid_scroll_up(self) -> None:
