@@ -9,13 +9,13 @@ The application has been modularized into the following components:
 ### Core Modules (`core/`)
 - **`image_manager.py`** - Handles image loading, scaling, and coordinate transformations
 - **`label_manager.py`** - Manages bounding box labels and file I/O operations
-- **`zoom_manager.py`** - Handles zoom and pan functionality with debouncing
+- **`zoom_manager.py`** - Handles cursor-centered zoom and pan functionality with smooth animations
 
 ### UI Modules (`ui/`)
 - **`main_window.py`** - Main application window and menu setup
 - **`grid_view.py`** - Thumbnail grid view for browsing images
 - **`labeling_view.py`** - Canvas-based labeling interface for drawing bounding boxes
-- **`controls.py`** - Navigation and zoom control widgets
+- **`controls.py`** - Navigation, zoom, and information display widgets
 
 ### Utilities (`utils/`)
 - **`constants.py`** - Application constants and configuration
@@ -45,7 +45,8 @@ The application will automatically load images from the `images/` directory if i
 
 - **Grid View**: Browse images as thumbnails in a scrollable grid
 - **Labeling Interface**: Draw bounding boxes by holding Ctrl and dragging
-- **Zoom & Pan**: Mouse wheel zoom with pan support for large images
+- **Zoom & Pan**: Cursor-centered mouse wheel zoom with smooth scaling and pan support
+- **Image Information**: Current filename and image counter displayed in labeling view
 - **Keyboard Shortcuts**:
   - **Navigation**: `←`/`→` (Previous/Next image), `↑`/`↓` (Scroll grid), `q` (Back to grid view)
   - **Zoom**: `f` (Fit to canvas), `1` (100% zoom), `2` (200% zoom), `Ctrl++`/`Ctrl+-` (Zoom in/out), Mouse wheel (Zoom)
