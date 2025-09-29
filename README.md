@@ -45,11 +45,11 @@ The application will automatically load images from the `images/` directory if i
 
 - **Grid View**: Browse images as thumbnails in a scrollable grid
 - **Labeling Interface**: Draw bounding boxes by holding Ctrl and dragging
-- **Zoom & Pan**: Cursor-centered mouse wheel zoom with smooth scaling and pan support
+- **Zoom & Pan**: Smooth scaling and pan support
 - **Image Information**: Current filename and image counter displayed in labeling view
 - **Keyboard Shortcuts**:
   - **Navigation**: `←`/`→` (Previous/Next image), `↑`/`↓` (Scroll grid), `q` (Back to grid view)
-  - **Zoom**: `f` (Fit to canvas), `1` (100% zoom), `2` (200% zoom), `Ctrl++`/`Ctrl+-` (Zoom in/out), Mouse wheel (Zoom)
+  - **Zoom**: `f` (Fit to canvas), `1` (100% zoom), `2` (200% zoom), `Ctrl++`/`Ctrl+-` (Zoom in/out)
   - **Labeling**: `Ctrl+z` (Undo bounding box), `Ctrl+Backspace` (Clear all labels)
   - **Alternative Zoom**: `Ctrl+0` (Fit), `Ctrl+1` (100%), `Ctrl+2` (200%)
 - **Auto-save**: Labels are automatically saved in YOLO format

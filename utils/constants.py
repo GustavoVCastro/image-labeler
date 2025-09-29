@@ -1,7 +1,7 @@
 """Application constants and configuration."""
 
 # Supported image file extensions
-SUPPORTED_EXTENSIONS = ('.png', '.jpg', '.jpeg', '.bmp', '.gif')
+SUPPORTED_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".gif")
 
 # Default directories
 DEFAULT_IMAGES_DIR = "data/images"
@@ -15,11 +15,8 @@ THUMBNAIL_SIZE = (150, 150)
 
 # Zoom Configuration
 MIN_ZOOM = 0.1  # Minimum zoom (10% of original size)
-MAX_ZOOM_MOUSE = 2.0  # Maximum zoom for mouse wheel (200%)
 MAX_ZOOM_KEYBOARD = 2.0  # Maximum zoom for keyboard shortcuts (200%)
-ZOOM_COOLDOWN = 50  # milliseconds between zoom operations
 ZOOM_INCREMENT_KEYBOARD = 1.1  # Zoom increment for keyboard
-ZOOM_INCREMENT_MOUSE = 1.05  # Zoom increment for mouse wheel (smoother)
 
 
 # Drawing Configuration
