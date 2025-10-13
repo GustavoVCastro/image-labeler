@@ -40,9 +40,7 @@ class ImageLabelerApp:
         # Initialize core managers
         self.image_manager = ImageManager()
         self.label_manager = LabelManager(self.labels_dir)
-        self.zoom_manager = ZoomManager(
-            self.image_manager, self._update_display, self.root
-        )
+        self.zoom_manager = ZoomManager(self.image_manager, self._update_display, self.root)
 
         # Initialize UI components
         self.grid_view = GridView(self.root, self.labels_dir)

@@ -16,15 +16,9 @@ class LabelingView:
         self.canvas = tk.Canvas(self.frame, bg="gray")
 
         # Scrollbars
-        self.h_scrollbar = tk.Scrollbar(
-            self.frame, orient=tk.HORIZONTAL, command=self.canvas.xview
-        )
-        self.v_scrollbar = tk.Scrollbar(
-            self.frame, orient=tk.VERTICAL, command=self.canvas.yview
-        )
-        self.canvas.config(
-            xscrollcommand=self.h_scrollbar.set, yscrollcommand=self.v_scrollbar.set
-        )
+        self.h_scrollbar = tk.Scrollbar(self.frame, orient=tk.HORIZONTAL, command=self.canvas.xview)
+        self.v_scrollbar = tk.Scrollbar(self.frame, orient=tk.VERTICAL, command=self.canvas.yview)
+        self.canvas.config(xscrollcommand=self.h_scrollbar.set, yscrollcommand=self.v_scrollbar.set)
 
         # Bounding box drawing state
         self.drawing_rect: Optional[int] = None
@@ -35,9 +29,7 @@ class LabelingView:
         self.box_rects: List[int] = []
 
         # Callbacks
-        self.box_created_callback: Optional[
-            Callable[[float, float, float, float], None]
-        ] = None
+        self.box_created_callback: Optional[Callable[[float, float, float, float], None]] = None
         self.pan_start_callback: Optional[Callable[[float, float], None]] = None
         self.pan_update_callback: Optional[Callable[[float, float], None]] = None
         self.pan_end_callback: Optional[Callable[[], None]] = None

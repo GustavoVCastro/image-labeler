@@ -35,10 +35,7 @@ class ZoomManager:
 
     def can_zoom_in_keyboard(self) -> bool:
         """Check if we can zoom in using keyboard shortcuts."""
-        return (
-            self.image_manager.scale_factor * ZOOM_INCREMENT_KEYBOARD
-            <= MAX_ZOOM_KEYBOARD
-        )
+        return self.image_manager.scale_factor * ZOOM_INCREMENT_KEYBOARD <= MAX_ZOOM_KEYBOARD
 
     def can_zoom_out(self) -> bool:
         """Check if we can zoom out."""

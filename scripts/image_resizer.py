@@ -21,7 +21,7 @@ def resize_image(input_path, output_path, target_size=640):
     Resize an image so that its smallest side becomes target_size pixels.
     Preserves aspect ratio and converts to JPEG format.
     Handles EXIF orientation data to prevent rotation issues (especially with HEIC).
-    
+
     Args:
         input_path (str): Path to input image
         output_path (str): Path to save resized image
@@ -32,14 +32,14 @@ def resize_image(input_path, output_path, target_size=640):
         with Image.open(input_path) as img:
             # Handle EXIF orientation data to prevent rotation issues
             img = fix_image_orientation(img)
-            
+
             # Convert to RGB if necessary (for JPEG compatibility)
-            if img.mode in ('RGBA', 'LA', 'P'):
-                img = img.convert('RGB')
-            
+            if img.mode in ("RGBA", "LA", "P"):
+                img = img.convert("RGB")
+
             # Get original dimensions
             width, height = img.size
-            
+
             # Calculate new dimensions
             if width < height:
                 # Width is smaller, scale based on width
@@ -49,15 +49,17 @@ def resize_image(input_path, output_path, target_size=640):
                 # Height is smaller, scale based on height
                 new_height = target_size
                 new_width = int((width * target_size) / height)
-            
+
             # Resize the image
             resized_img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
-            
+
             # Save as JPEG (remove EXIF data to prevent orientation issues)
-            resized_img.save(output_path, 'JPEG', quality=95, optimize=True)
-            
-            print(f"Resized: {input_path} -> {output_path} ({width}x{height} -> {new_width}x{new_height})")
-            
+            resized_img.save(output_path, "JPEG", quality=95, optimize=True)
+
+            print(
+                f"Resized: {input_path} -> {output_path} ({width}x{height} -> {new_width}x{new_height})"
+            )
+
     except Exception as e:
         print(f"Error processing {input_path}: {str(e)}")
 
@@ -66,21 +68,21 @@ def fix_image_orientation(img):
     """
     Fix image orientation based on EXIF data.
     This prevents HEIC and other images from being rotated incorrectly.
-    
+
     Args:
         img (PIL.Image): PIL Image object
-        
+
     Returns:
         PIL.Image: Corrected image
     """
     try:
         # Check if image has EXIF data
-        if hasattr(img, '_getexif'):
+        if hasattr(img, "_getexif"):
             exif = img._getexif()
             if exif is not None:
                 # Get orientation tag (274)
                 orientation = exif.get(274, 1)
-                
+
                 # Apply rotation based on orientation value
                 if orientation == 2:
                     # Mirror horizontally
@@ -108,75 +110,87 @@ def fix_image_orientation(img):
     except Exception as e:
         # If EXIF processing fails, continue with original image
         print(f"Warning: Could not process EXIF data: {str(e)}")
-    
+
     return img
 
 
 def get_image_files(directory):
     """
     Get all image files from a directory.
-    
+
     Args:
         directory (str): Directory path
-        
+
     Returns:
         list: List of image file paths
     """
-    image_extensions = {'.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.tif', '.webp', '.gif', '.heic', '.heif'}
+    image_extensions = {
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".bmp",
+        ".tiff",
+        ".tif",
+        ".webp",
+        ".gif",
+        ".heic",
+        ".heif",
+    }
     image_files = []
-    
-    for file_path in Path(directory).rglob('*'):
+
+    for file_path in Path(directory).rglob("*"):
         if file_path.is_file() and file_path.suffix.lower() in image_extensions:
             image_files.append(file_path)
-    
+
     return image_files
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Resize images so smallest side becomes 640px while preserving aspect ratio'
+        description="Resize images so smallest side becomes 640px while preserving aspect ratio"
     )
-    parser.add_argument('input_dir', help='Input directory containing images')
-    parser.add_argument('output_dir', help='Output directory for resized images')
-    parser.add_argument('--size', type=int, default=640, 
-                       help='Target size for smallest side (default: 640)')
-    
+    parser.add_argument("input_dir", help="Input directory containing images")
+    parser.add_argument("output_dir", help="Output directory for resized images")
+    parser.add_argument(
+        "--size", type=int, default=640, help="Target size for smallest side (default: 640)"
+    )
+
     args = parser.parse_args()
-    
+
     # Validate input directory
     if not os.path.isdir(args.input_dir):
         print(f"Error: Input directory '{args.input_dir}' does not exist.")
         sys.exit(1)
-    
+
     # Create output directory if it doesn't exist
     os.makedirs(args.output_dir, exist_ok=True)
-    
+
     # Get all image files
     image_files = get_image_files(args.input_dir)
-    
+
     if not image_files:
         print(f"No image files found in '{args.input_dir}'")
         sys.exit(1)
-    
+
     print(f"Found {len(image_files)} image(s) to process...")
-    
+
     # Process each image
     processed_count = 0
     for image_path in image_files:
         # Create output filename (change extension to .jpg)
         relative_path = image_path.relative_to(Path(args.input_dir))
-        output_filename = relative_path.with_suffix('.jpg')
+        output_filename = relative_path.with_suffix(".jpg")
         output_path = Path(args.output_dir) / output_filename
-        
+
         # Create subdirectories if needed
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        
+
         # Resize the image
         resize_image(str(image_path), str(output_path), args.size)
         processed_count += 1
-    
+
     print(f"\nProcessing complete! {processed_count} images processed.")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

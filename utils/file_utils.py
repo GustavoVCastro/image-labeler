@@ -15,10 +15,10 @@ def get_image_files(directory: str) -> List[str]:
     """Get list of image files from a directory."""
     if not os.path.exists(directory):
         return []
-    
+
     return [
-        os.path.join(directory, f) 
-        for f in os.listdir(directory) 
+        os.path.join(directory, f)
+        for f in os.listdir(directory)
         if f.lower().endswith(SUPPORTED_EXTENSIONS)
     ]
 
