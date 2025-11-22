@@ -30,6 +30,7 @@ class GridView:
 
         # Store references to prevent garbage collection
         self.thumbnail_refs: List[ImageTk.PhotoImage] = []
+        self.grid_containers: List[Optional[tk.Frame]] = []
 
     def set_selection_callback(self, callback: Callable[[int], None]) -> None:
         """Set the callback function for when an image is selected."""
@@ -61,24 +62,44 @@ class GridView:
                 self._create_thumbnail_button(i, image_path)
             except Exception as e:
                 print(f"Error loading thumbnail for {image_path}: {e}")
+                self.grid_containers.append(None)
 
         # Update scroll region
         self.frame.update_idletasks()
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
 
-    def refresh_checkmarks(self) -> None:
-        """Refresh checkmarks for all images in the grid."""
-        if not hasattr(self, "image_paths"):
+    def refresh_checkmarks(self, specific_index: Optional[int] = None) -> None:
+        """
+        Refresh checkmarks for images in the grid.
+        If specific_index is provided, only that image is updated.
+        """
+        if not hasattr(self, "image_paths") or not hasattr(self, "grid_containers"):
             return
 
-        # Update checkmarks by re-populating grid
-        self.populate_grid(self.image_paths)
+        # If containers list doesn't match images list, do a full refresh
+        if len(self.grid_containers) != len(self.image_paths):
+            self.populate_grid(self.image_paths)
+            return
+
+        if specific_index is not None:
+            if 0 <= specific_index < len(self.image_paths):
+                if self.grid_containers[specific_index] is not None:
+                    has_labels = self._has_labels(self.image_paths[specific_index])
+                    self._update_indicator(specific_index, has_labels)
+            return
+
+        # Update checkmarks efficiently without reloading images
+        for i, image_path in enumerate(self.image_paths):
+            if self.grid_containers[i] is not None:
+                has_labels = self._has_labels(image_path)
+                self._update_indicator(i, has_labels)
 
     def _clear_grid(self) -> None:
         """Clear all thumbnails from the grid."""
         for widget in self.frame.winfo_children():
             widget.destroy()
         self.thumbnail_refs.clear()
+        self.grid_containers.clear()
 
     def _create_thumbnail_button(self, index: int, image_path: str) -> None:
         """Create a thumbnail button for an image."""
@@ -91,9 +112,14 @@ class GridView:
         self.thumbnail_refs.append(photo)
 
         # Create container frame for thumbnail and checkmark
-        container = tk.Frame(self.frame, width=THUMBNAIL_SIZE[0], height=THUMBNAIL_SIZE[1])
+        container = tk.Frame(
+            self.frame, width=THUMBNAIL_SIZE[0], height=THUMBNAIL_SIZE[1]
+        )
         container.grid_propagate(False)  # Don't resize based on contents
-        container.grid(row=index // GRID_COLUMNS, column=index % GRID_COLUMNS, padx=5, pady=5)
+        container.grid(
+            row=index // GRID_COLUMNS, column=index % GRID_COLUMNS, padx=5, pady=5
+        )
+        self.grid_containers.append(container)
 
         # Create button with thumbnail
         btn = tk.Button(
@@ -108,14 +134,42 @@ class GridView:
 
         # Check if image has labels
         has_labels = self._has_labels(image_path)
+        self._update_indicator(index, has_labels)
 
-        # Add green square overlay if labeled
+    def _update_indicator(self, index: int, has_labels: bool) -> None:
+        """Update the indicator for a specific thumbnail."""
+        if index < 0 or index >= len(self.grid_containers):
+            return
+
+        container = self.grid_containers[index]
+        if container is None:
+            return
+
+        # Find existing indicator if any
+        indicator = None
+        for widget in container.winfo_children():
+            if isinstance(widget, tk.Label) and widget.cget("bg") == "#4CAF50":
+                indicator = widget
+                break
+
         if has_labels:
-            indicator = tk.Label(
-                container, bg="#4CAF50", relief="solid", borderwidth=1  # Green color
-            )
-            # Position in bottom right corner
-            indicator.place(x=THUMBNAIL_SIZE[0] - 16, y=THUMBNAIL_SIZE[1] - 16, width=12, height=12)
+            if not indicator:
+                indicator = tk.Label(
+                    container,
+                    bg="#4CAF50",
+                    relief="solid",
+                    borderwidth=1,  # Green color
+                )
+                # Position in bottom right corner
+                indicator.place(
+                    x=THUMBNAIL_SIZE[0] - 16,
+                    y=THUMBNAIL_SIZE[1] - 16,
+                    width=12,
+                    height=12,
+                )
+        else:
+            if indicator:
+                indicator.destroy()
 
     def _on_image_selected(self, index: int) -> None:
         """Handle image selection."""

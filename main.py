@@ -278,7 +278,7 @@ class ImageLabelerApp:
         self.label_manager.save_labels(current_image_path)
 
         # Refresh checkmarks in grid view
-        self.grid_view.refresh_checkmarks()
+        self.grid_view.refresh_checkmarks(self.current_image_index)
 
     def _clear_labels(self) -> None:
         """Clear all labels for the current image."""
@@ -293,7 +293,7 @@ class ImageLabelerApp:
         self.label_manager.delete_labels(current_image_path)
 
         # Refresh checkmarks in grid view
-        self.grid_view.refresh_checkmarks()
+        self.grid_view.refresh_checkmarks(self.current_image_index)
 
         # Update display
         self._update_display()
@@ -309,7 +309,7 @@ class ImageLabelerApp:
             self.label_manager.save_labels(current_image_path)
 
             # Refresh checkmarks in grid view (in case all boxes were removed)
-            self.grid_view.refresh_checkmarks()
+            self.grid_view.refresh_checkmarks(self.current_image_index)
 
             # Update display
             self._update_display()
