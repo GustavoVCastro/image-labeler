@@ -21,3 +21,6 @@ venv/
 data/input/*
 data/labels/*
 data/images/*
+!data/input/.gitkeep
+!data/labels/.gitkeep
+!data/images/.gitkeep
