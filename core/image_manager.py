@@ -50,7 +50,9 @@ class ImageManager:
         scale_y = canvas_height / img_height
         return min(scale_x, scale_y) * CANVAS_MARGIN
 
-    def set_scale_and_center(self, scale: float, canvas_width: int, canvas_height: int) -> None:
+    def set_scale_and_center(
+        self, scale: float, canvas_width: int, canvas_height: int
+    ) -> None:
         """Set scale factor and center image on canvas."""
         self.scale_factor = scale
 
@@ -79,7 +81,9 @@ class ImageManager:
             if not scaled_size:
                 return None
 
-            resized_image = self.original_image.resize(scaled_size, Image.Resampling.LANCZOS)
+            resized_image = self.original_image.resize(
+                scaled_size, Image.Resampling.LANCZOS
+            )
             self.image_tk = ImageTk.PhotoImage(resized_image)
             return self.image_tk
         except Exception as e:
@@ -110,7 +114,9 @@ class ImageManager:
             self.image_x += dx
             self.image_y += dy
 
-    def canvas_to_image_coords(self, canvas_x: float, canvas_y: float) -> Tuple[float, float]:
+    def canvas_to_image_coords(
+        self, canvas_x: float, canvas_y: float
+    ) -> Tuple[float, float]:
         """Convert canvas coordinates to original image coordinates."""
         if not self.original_image:
             return canvas_x, canvas_y

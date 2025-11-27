@@ -72,3 +72,4 @@ O uso de atalhos agiliza muito o processo de rotulagem. Abaixo estão os princip
     *   Todos os valores são normalizados entre 0 e 1.
     *   `class_id` é 0 por padrão.
 
+
